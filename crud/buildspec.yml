@@ -1,0 +1,30 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - echo installing nodejs...
+      #Este comando é responsável por baixar o arquivo tar node.js versão 12 no contêiner ubuntu
+      - curl -sL https://deb.nodesource.com/setup_12.x | bash -
+      - apt-get install -y nodejs
+      - echo installing yarn...
+      #Este comando serve para baixar o yarnarquivo tar do gerenciador de pacotes. Não é obrigatório fazer isso, mas eu prefiro isso aos npmcomandos.
+      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+      - apt install --no-install-recommends yarn
+  pre_build:
+    commands:
+      - echo installing dependencies...
+      - npm i -g @angular/cli
+      - npm install
+  build:
+    commands:
+      # - echo testing...
+      # - echo building...
+      - ng build --prod
+artifacts:
+  files:
+    # Por meio desse comando, ele obterá todos os arquivos de construção e os carregará nos AWS S3serviços, que é onde eles serão hospedados.
+    - "**/*"
+  discard-paths: no
+  base-directory: dist/crud
